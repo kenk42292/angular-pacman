@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Angular Pacman</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="angular-1.5.8/angular.js"></script>
+    <script src="pacman.js"></script>
+    <script src="directives/maze.js"></script>
+    <script src="controllers/main-controller.js"></script>
+    <script src="directives/brick.js"></script>
+    <script src="directives/pellet.js"></script>
+    <script src="directives/pacman-agent.js"></script>
+</head>
+<body ng-app="pacman" ng-controller="mainController">
+    <maze> 
+        <brick grid-y="{{loc[0]}}" grid-x="{{loc[1]}}" ng-repeat="loc in brickLocations"></brick>
+        <pellet grid-y="{{loc[0]}}" grid-x="{{loc[1]}}" ng-repeat="loc in pelletLocations"></pellet>
+        <pacman-agent></pacman-agent>
+    </maze>
+</body>
+</html>
+
+
+
