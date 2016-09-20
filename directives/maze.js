@@ -30,23 +30,13 @@ pacmanApp.directive("maze", function() {
 
 
 
-        $scope.brickLocations = [];
+        $scope.cellLocations = [];
         for (var i=0; i<20; i++) {
             for (var j=0; j<20; j++) {
-                if ($scope.GRID[i][j]==1) {
-                    $scope.brickLocations.push([i, j]);
-                }
+                $scope.cellLocations.push([i, j]);
             }
         }
-        $scope.pelletLocations = [];
-        for (var i=0; i<20; i++) {
-            for (var j=0; j<20; j++) {
-                if ($scope.GRID[i][j]==0) {
-                    $scope.pelletLocations.push([i, j]);
-                }
-            }
-        }
-    }
+   }
 
 
     return {
