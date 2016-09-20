@@ -5,7 +5,7 @@ pacmanApp.controller("mainController", function($scope) {
         $scope.RIGHT = 39;
         $scope.DOWN = 40;
 
-        //$scope.maze = new Maze();
+        $scope.maze = new Maze();
 
 
 
