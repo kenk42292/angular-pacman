@@ -1,15 +1,26 @@
 
 pacmanApp.directive("pacmanAgent", function($document, $interval) {
 
-    function link(scope, element, attrs) {
+    function controller($scope) {
+
         /* INITIALIZATION */
-        scope.x = 30;
-        scope.y = 30;
+        $scope.x = CELL_WIDTH;
+        $scope.y = CELL_HEIGHT;
     
-        scope.mouthState = 0;
-        scope.intendedDirection = scope.RIGHT;
-        scope.direction = scope.RIGHT;
- 
+        $scope.mouthState = 0;
+        $scope.intendedDirection = $scope.RIGHT;
+        $scope.direction = $scope.RIGHT;
+
+        $scope.eatCell = function() {
+            if (!($scope.y%CELL_HEIGHT) && !($scope.x%CELL_WIDTH)) {
+                $scope.GRID[$scope.y/CELL_HEIGHT*GRID_HEIGHT+$scope.x/CELL_WIDTH] = 0;
+            }
+        }
+
+    }
+
+
+    function link(scope, element, attrs) {
 
         /* USER CONTROL  */
         $document.on("keydown", function(event) {
@@ -17,20 +28,25 @@ pacmanApp.directive("pacmanAgent", function($document, $interval) {
             scope.intendedDirection = event.keyCode;
         });
 
+        function moveable(gridY, gridX) {
+            return (scope.GRID[gridY*GRID_HEIGHT+gridX] == 0) || (scope.GRID[gridY*GRID_HEIGHT+gridX] == 1);
+        }
+
 
         /* INCREMENTAL ACTION PER TIME STEP */
         function timeAction() {
-            scope.mouthState = (scope.mouthState+1)%5;
+            scope.eatCell();
+            scope.mouthState = (scope.mouthState+1)%NUM_MOUTH_STATES;
             switch (scope.intendedDirection) {
                 case scope.LEFT:
                 case scope.RIGHT:
-                    if (!(scope.y%30)) {
+                    if (!(scope.y%CELL_HEIGHT)) {
                         scope.direction=scope.intendedDirection;
                     }
                     break;
                 case scope.UP:
                 case scope.DOWN:
-                    if (!(scope.x%30)) {
+                    if (!(scope.x%CELL_WIDTH)) {
                         scope.direction=scope.intendedDirection;
                     }
                     break;
@@ -40,33 +56,28 @@ pacmanApp.directive("pacmanAgent", function($document, $interval) {
             switch (scope.direction) {
                 case scope.LEFT:
                     r = 180;
-                    if (!scope.GRID[Math.floor(scope.y/30)][Math.floor((scope.x-5)/30)]) {
-                        scope.x -= 5;
+                    if (moveable(Math.floor(scope.y/CELL_HEIGHT), Math.floor((scope.x-5)/CELL_WIDTH))) {
+                        scope.x -= SPEED;
                     }
                     break;
                 case scope.UP:
                     r = 270;
-                    if (!scope.GRID[Math.floor((scope.y-5)/30)][Math.floor(scope.x/30)]) {
-                        scope.y -= 5;
+                    if (moveable(Math.floor((scope.y-5)/CELL_HEIGHT), Math.floor(scope.x/CELL_WIDTH))) {
+                        scope.y -= SPEED;
                     }
                     break;
                 case scope.RIGHT:
                     r = 0;
-                    if (!scope.GRID[Math.floor(scope.y/30)][Math.floor((scope.x+30)/30)]) {
-                        scope.x += 5;
+                    if (moveable(Math.floor(scope.y/CELL_HEIGHT), Math.floor((scope.x+CELL_WIDTH)/CELL_WIDTH))) {
+                        scope.x += SPEED;
                     }
                     break;
                 case scope.DOWN:
                     r = 90;
-                    if (!scope.GRID[Math.floor((scope.y+30)/30)][Math.floor(scope.x/30)]) {
-                        scope.y += 5;
+                    if (moveable(Math.floor((scope.y+CELL_HEIGHT)/CELL_HEIGHT), Math.floor(scope.x/CELL_WIDTH))) {
+                        scope.y += SPEED;
                     }
                     break;
-            }
-
-            /* IF PELLET POSSIBLY CONSUMED, EMIT NOTIFICATION  */
-            if (scope.x%30==0 && scope.y%30==0) {
-                //$emit("locTraversed", scope.y/30, scope.x/30);
             }
 
             element.css({
@@ -77,13 +88,14 @@ pacmanApp.directive("pacmanAgent", function($document, $interval) {
                 top: scope.y+"px",
             });
         }
-        var timeoutId = $interval(timeAction, 50);
+        var timeoutId = $interval(timeAction, TIME_INTERVAL);
         element.on("$destroy", function() {
             $interval.cancel(timeoutId);
         });
     }
 
     return {
+        controller: controller,
         link: link,
         replace: true,
         scope: true, 

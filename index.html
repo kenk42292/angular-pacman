@@ -12,7 +12,7 @@
 </head>
 <body ng-app="pacman" ng-controller="mainController">
     <maze> 
-        <cell grid-y="{{loc[0]}}" grid-x="{{loc[1]}}" ng-repeat="loc in cellLocations"></cell>
+        <cell grid-index="{{loc}}" ng-repeat="(loc, val) in GRID"></cell>
         <pacman-agent></pacman-agent>
     </maze>
 </body>
