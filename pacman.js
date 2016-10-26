@@ -8,5 +8,6 @@ var CELL_WIDTH = 30;
 var CELL_HEIGHT = 30;
 
 var NUM_MOUTH_STATES = 5;
+var NUM_GHOST_STATES = 2;
 var SPEED = 5;
 var TIME_INTERVAL = 50;

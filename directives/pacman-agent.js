@@ -1,41 +1,70 @@
 
 pacmanApp.directive("pacmanAgent", function($document, $interval) {
 
-    function controller($scope) {
-
-        /* INITIALIZATION */
-        $scope.x = CELL_WIDTH;
-        $scope.y = CELL_HEIGHT;
-    
-        $scope.mouthState = 0;
-        $scope.intendedDirection = $scope.RIGHT;
-        $scope.direction = $scope.RIGHT;
-
-        $scope.eatCell = function() {
-            if (!($scope.y%CELL_HEIGHT) && !($scope.x%CELL_WIDTH)) {
-                $scope.GRID[$scope.y/CELL_HEIGHT*GRID_HEIGHT+$scope.x/CELL_WIDTH] = 0;
-            }
-        }
-
-    }
-
-
     function link(scope, element, attrs) {
+        
+        /* INITIALIZATION */
+        scope.y = scope.pacmanLocation[0];
+        scope.x = scope.pacmanLocation[1];
+    
+        scope.mouthState = 0;
+        scope.intendedDirection = scope.RIGHT;
+        scope.direction = scope.RIGHT;
 
         /* USER CONTROL  */
         $document.on("keydown", function(event) {
             event.preventDefault();
             scope.intendedDirection = event.keyCode;
         });
+        
+        scope.eatCell = function() {
+            if (!(scope.y%CELL_HEIGHT) && !(scope.x%CELL_WIDTH)) {
+                if (scope.GRID[scope.y/CELL_HEIGHT*GRID_HEIGHT+scope.x/CELL_WIDTH]) {
+                    scope.incrementScore()
+                }
+                scope.GRID[scope.y/CELL_HEIGHT*GRID_HEIGHT+scope.x/CELL_WIDTH] = 0;
+            }
+        }
 
         function moveable(gridY, gridX) {
             return (scope.GRID[gridY*GRID_HEIGHT+gridX] == 0) || (scope.GRID[gridY*GRID_HEIGHT+gridX] == 1);
         }
-
+        
+        /** If space overlaps with ghost, dead. */
+        function cellSpaceOverlap(y0, x0, y1, x1) {
+            return (Math.abs(y1-y0) < CELL_HEIGHT) && (Math.abs(x1-x0) < CELL_WIDTH);
+        }
+        
+        /** If coordinates, y, x, overlaps any ghost */
+        function overlapGhost(y, x) {
+            for (var ghostName in scope.ghostLocations) {
+                if (cellSpaceOverlap(y, x, scope.ghostLocations[ghostName][0], scope.ghostLocations[ghostName][1])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        scope.$on("reset", function(event, mass) {
+            console.log("pacman resetting...");
+            scope.y = scope.initialPacmanLocation[0];
+            scope.x = scope.initialPacmanLocation[1];
+            scope.pacmanLocation[0] = scope.y;
+            scope.pacmanLocation[1] = scope.x;
+        });
 
         /* INCREMENTAL ACTION PER TIME STEP */
         function timeAction() {
+            
+            /* Eat any possible pellets on cell. */
             scope.eatCell();
+            
+            /* If overlap with any ghosts, die. */
+            if (overlapGhost(scope.y, scope.x)) {
+                console.log("Dead");
+                scope.$emit("pgOverlap");
+            }
+
             scope.mouthState = (scope.mouthState+1)%NUM_MOUTH_STATES;
             switch (scope.intendedDirection) {
                 case scope.LEFT:
@@ -56,7 +85,7 @@ pacmanApp.directive("pacmanAgent", function($document, $interval) {
             switch (scope.direction) {
                 case scope.LEFT:
                     r = 180;
-                    if (moveable(Math.floor(scope.y/CELL_HEIGHT), Math.floor((scope.x-5)/CELL_WIDTH))) {
+                    if (moveable(Math.floor(scope.y/CELL_HEIGHT), Math.floor((scope.x-SPEED)/CELL_WIDTH))) {
                         scope.x -= SPEED;
                     }
                     break;
@@ -79,6 +108,10 @@ pacmanApp.directive("pacmanAgent", function($document, $interval) {
                     }
                     break;
             }
+            
+            /* Update maze's perception of where pacman is */
+            scope.pacmanLocation[0] = scope.y;
+            scope.pacmanLocation[1] = scope.x;
 
             element.css({
                 "-ms-transform": "rotate("+r+"deg)",
@@ -95,7 +128,6 @@ pacmanApp.directive("pacmanAgent", function($document, $interval) {
     }
 
     return {
-        controller: controller,
         link: link,
         replace: true,
         scope: true, 

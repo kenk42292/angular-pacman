@@ -6,12 +6,16 @@
     <script src="angular-1.5.8/angular.js"></script>
     <script src="pacman.js"></script>
     <script src="directives/maze.js"></script>
-    <script src="controllers/main-controller.js"></script>
+    <script src="controllers/game-controller.js"></script>
     <script src="directives/cell.js"></script>
     <script src="directives/pacman-agent.js"></script>
     <script src="directives/ghost-agent.js"></script>
 </head>
-<body ng-app="pacman" ng-controller="mainController">
+<body ng-app="pacman" ng-controller="gameController">
+    <div class="stateDisplay">
+        Score: {{gameState.score}}
+        Lives: {{gameState.numLives}}
+    </div>
     <maze> 
         <cell grid-index="{{loc}}" ng-repeat="(loc, val) in GRID"></cell>
         <pacman-agent></pacman-agent>
