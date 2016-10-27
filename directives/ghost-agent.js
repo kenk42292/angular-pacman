@@ -85,6 +85,8 @@ pacmanApp.directive("ghostAgent", function($document, $interval) {
                             if (index === pIndex) {
                                 return initialDirection==null ? direction : initialDirection;
                             }
+                            /* No weighted costs - purely distance */
+                            explored.add(lastIndex);
                             frontier.insert(distSoFar+1+heuristic(Math.floor(index/GRID_WIDTH), index%GRID_WIDTH),
                                                     {lastIndex : index,
                                                       distSoFar : distSoFar+1,
