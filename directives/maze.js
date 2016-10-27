@@ -2,35 +2,17 @@
 pacmanApp.directive("maze", function() {
    
     function controller($scope) {
-        var gridVisual = [
-            [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-            [2,0,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,2],
-            [2,1,2,2,2,2,2,2,1,1,2,1,1,2,2,2,1,1,1,2],
-            [2,1,2,1,1,1,1,2,1,2,2,1,1,2,1,2,2,2,1,2],
-            [2,1,2,2,2,2,1,1,1,2,2,2,2,2,1,2,2,2,1,2],
-            [2,1,1,1,1,1,1,1,1,2,2,1,1,1,1,2,2,2,1,2],
-            [2,1,2,2,2,2,2,1,1,1,2,2,2,2,1,1,1,1,1,2],
-            [2,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
-            [2,1,2,1,2,2,2,2,1,1,2,2,2,1,1,1,2,2,1,2],
-            [2,1,2,1,2,2,2,2,1,1,2,2,2,2,2,1,2,2,1,2],
-            [2,1,1,1,2,2,2,2,1,1,2,1,1,1,2,1,2,2,1,2],
-            [2,1,1,1,1,1,1,1,1,1,2,1,1,1,2,1,2,2,1,2],
-            [2,1,2,2,1,2,2,2,1,1,2,2,2,1,2,1,2,2,1,2],
-            [2,1,2,2,1,2,1,2,1,2,2,1,2,1,2,1,2,2,1,2],
-            [2,1,2,2,2,2,1,2,1,2,2,1,2,1,2,1,2,2,1,2],
-            [2,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,2],
-            [2,1,1,1,2,2,2,2,1,1,2,1,2,1,1,2,2,2,1,2],
-            [2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,2,2,1,2],
-            [2,2,2,1,1,2,2,2,2,2,2,1,1,1,1,1,1,1,1,2],
-            [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-        ];
 
-        $scope.GRID = {};
-        for (var i=0; i<GRID_HEIGHT; i++) {
-            for (var j=0; j<GRID_WIDTH; j++) {
-                $scope.GRID[i*GRID_HEIGHT+j] = gridVisual[i][j];
+        $scope.GRID = generateMaze(GRID_HEIGHT, GRID_WIDTH, 1, 1);
+        $scope.numPellets = 0;
+        for (var k in $scope.GRID) {
+            if ($scope.GRID[k]==1) {
+                $scope.numPellets += 1;
             }
         }
+        console.log($scope.numPellets);
+        
+
         
         /** Track pacman (y, x) pixel-coordinates */
         $scope.initialPacmanLocation = [1*CELL_HEIGHT, 1*CELL_WIDTH];
@@ -38,24 +20,25 @@ pacmanApp.directive("maze", function() {
         
         /** Track ghost (y, x) pixel-coordinates */
         $scope.initialGhostLocations = {
-            "blinky" : [1*CELL_HEIGHT, 11*CELL_WIDTH],
-            "inky" : [1*CELL_HEIGHT, 11*CELL_WIDTH],
-            "pinky" : [2*CELL_HEIGHT, 12*CELL_WIDTH],
-            "clyde" : [2*CELL_HEIGHT, 12*CELL_WIDTH]
+            "blinky" : [(GRID_HEIGHT-2)*CELL_HEIGHT, (GRID_WIDTH-2)*CELL_WIDTH],
+            "inky" : [(GRID_HEIGHT-2)*CELL_HEIGHT, (GRID_WIDTH-3)*CELL_WIDTH],
+            "pinky" : [(GRID_HEIGHT-3)*CELL_HEIGHT, (GRID_WIDTH-2)*CELL_WIDTH],
+            "clyde" : [(GRID_HEIGHT-3)*CELL_HEIGHT, (GRID_WIDTH-3)*CELL_WIDTH]
         }
         
         $scope.ghostLocations = {
-            "blinky" : [1*CELL_HEIGHT, 11*CELL_WIDTH],
-            "inky" : [1*CELL_HEIGHT, 11*CELL_WIDTH],
-            "pinky" : [2*CELL_HEIGHT, 12*CELL_WIDTH],
-            "clyde" : [2*CELL_HEIGHT, 12*CELL_WIDTH]
+            "blinky" : [(GRID_HEIGHT-2)*CELL_HEIGHT, (GRID_WIDTH-2)*CELL_WIDTH],
+            "inky" : [(GRID_HEIGHT-2)*CELL_HEIGHT, (GRID_WIDTH-3)*CELL_WIDTH],
+            "pinky" : [(GRID_HEIGHT-3)*CELL_HEIGHT, (GRID_WIDTH-2)*CELL_WIDTH],
+            "clyde" : [(GRID_HEIGHT-3)*CELL_HEIGHT, (GRID_WIDTH-3)*CELL_WIDTH]
         }
         
         $scope.$on("pgOverlap", function(event, data) {
             console.log("overlap message received in maze");
             $scope.$broadcast("reset");
-            $scope.gameState.numLives -= 1;
+            $scope.decrementLives();
         });
+
    }
 
 

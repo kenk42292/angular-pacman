@@ -14,6 +14,25 @@ pacmanApp.directive("ghostAgent", function($document, $interval) {
         scope.direction = RIGHT;
         
         scope.name = attrs.name;
+        scope.randomness = 0.2;
+        scope.numIntervals = 5;
+        switch (attrs.name) {
+            case "blinky":
+                scope.randomness = 0;
+                scope.numIntervals = 5;
+                break;
+            case "inky":
+                scope.randomness = 0.3;
+                scope.numIntervals = 7;
+                break;
+            case "pinky":
+                scope.randomness = 0.6;
+                scope.numIntervals = 8;
+                break;
+            case "clyde":
+                scope.randomness = 0.3;
+                scope.numIntervals = 4;
+        }
         
         scope.$on("reset", function() {
             scope.y = scope.initialGhostLocations[scope.name][0];
@@ -43,7 +62,7 @@ pacmanApp.directive("ghostAgent", function($document, $interval) {
         }
         var timeoutId = $interval(timeAction, TIME_INTERVAL);
         var statechangeTimeoutId = $interval(changeState, 20*TIME_INTERVAL*Math.max(Math.random(), 0.5));
-        var rdTimeoutId = $interval(function() {chasingDirection(scope);}, 15*TIME_INTERVAL*Math.max(Math.random(), 0.5));
+        var rdTimeoutId = $interval(function() {chasingDirection(scope);}, scope.numIntervals*TIME_INTERVAL);
         element.on("$destroy", function() {
             $interval.cancel(timeoutId);
             $interval.cancel(rdTimeoutId);

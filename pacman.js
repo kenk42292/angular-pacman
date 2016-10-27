@@ -7,8 +7,9 @@ goog.require('goog.structs.Set');
 
 var pacmanApp = angular.module("pacman", []);
 
-var GRID_HEIGHT = 20;
-var GRID_WIDTH = 20;
+/** Both height and width must be odd */
+var GRID_HEIGHT = 21;
+var GRID_WIDTH = 21;
 
 var CELL_WIDTH = 30;
 var CELL_HEIGHT = 30;
