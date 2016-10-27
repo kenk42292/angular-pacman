@@ -9,14 +9,14 @@ function moveable(scope, gridY, gridX) {
 
 function agentMove(scope) {
     switch (scope.intendedDirection) {
-        case scope.LEFT:
-        case scope.RIGHT:
+        case LEFT:
+        case RIGHT:
             if (!(scope.y%CELL_HEIGHT)) {
                 scope.direction=scope.intendedDirection;
             }
             break;
-        case scope.UP:
-        case scope.DOWN:
+        case UP:
+        case DOWN:
             if (!(scope.x%CELL_WIDTH)) {
                 scope.direction=scope.intendedDirection;
             }
@@ -25,25 +25,25 @@ function agentMove(scope) {
 
     var r = 0;
     switch (scope.direction) {
-        case scope.LEFT:
+        case LEFT:
             r = 180;
             if (moveable(scope, Math.floor(scope.y/CELL_HEIGHT), Math.floor((scope.x-SPEED)/CELL_WIDTH))) {
                 scope.x -= SPEED;
             }
             break;
-        case scope.UP:
+        case UP:
             r = 270;
             if (moveable(scope, Math.floor((scope.y-SPEED)/CELL_HEIGHT), Math.floor(scope.x/CELL_WIDTH))) {
                 scope.y -= SPEED;
             }
             break;
-        case scope.RIGHT:
+        case RIGHT:
             r = 0;
             if (moveable(scope, Math.floor(scope.y/CELL_HEIGHT), Math.floor((scope.x+CELL_WIDTH)/CELL_WIDTH))) {
                 scope.x += SPEED;
             }
             break;
-        case scope.DOWN:
+        case DOWN:
             r = 90;
             if (moveable(scope, Math.floor((scope.y+CELL_HEIGHT)/CELL_HEIGHT), Math.floor(scope.x/CELL_WIDTH))) {
                 scope.y += SPEED;
@@ -76,13 +76,13 @@ function directionToDegrees(direction) {
 function randomDirectionChange(scope) {
     var rn = Math.random();
     if (rn < 0.25) {
-        scope.intendedDirection = scope.LEFT;
+        scope.intendedDirection = LEFT;
     } else if (rn < 0.5) {
-        scope.intendedDirection = scope.RIGHT;
+        scope.intendedDirection = RIGHT;
     } else if (rn < 0.75) {
-        scope.intendedDirection = scope.UP;
+        scope.intendedDirection = UP;
     } else {
-        scope.intendedDirection = scope.DOWN;
+        scope.intendedDirection = DOWN;
     }
 }
 
@@ -139,7 +139,7 @@ function chasingDirection(scope) {
         }
         return "RIGHT";
     }
-    scope.intendedDirection = scope[a_star(pGridY, pGridX, gridY, gridX)];
+    scope.intendedDirection = eval(a_star(pGridY, pGridX, gridY, gridX));
 }
 
 
@@ -153,5 +153,20 @@ function eatCell(scope) {
         }
         scope.GRID[scope.y/CELL_HEIGHT*GRID_WIDTH+scope.x/CELL_WIDTH] = 0;
     }
+}
+
+/** If coordinates, y, x, overlaps any ghost */
+function overlapGhost(scope) {
+    for (var ghostName in scope.ghostLocations) {
+        if (cellSpaceOverlap(scope.y, scope.x, scope.ghostLocations[ghostName][0], scope.ghostLocations[ghostName][1])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** If space overlaps with ghost, dead. */
+function cellSpaceOverlap(y0, x0, y1, x1) {
+    return (Math.abs(y1-y0) < CELL_HEIGHT) && (Math.abs(x1-x0) < CELL_WIDTH);
 }
 

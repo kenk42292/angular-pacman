@@ -10,8 +10,8 @@ pacmanApp.directive("ghostAgent", function($document, $interval) {
         scope.x = scope.initialGhostLocations[scope.name][1];
     
         scope.state = 0;
-        scope.intendedDirection = scope.RIGHT;
-        scope.direction = scope.RIGHT;
+        scope.intendedDirection = RIGHT;
+        scope.direction = RIGHT;
         
         scope.name = attrs.name;
         
