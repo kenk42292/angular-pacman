@@ -19,15 +19,15 @@ pacmanApp.directive("pacmanAgent", function($document, $interval) {
         
         scope.eatCell = function() {
             if (!(scope.y%CELL_HEIGHT) && !(scope.x%CELL_WIDTH)) {
-                if (scope.GRID[scope.y/CELL_HEIGHT*GRID_HEIGHT+scope.x/CELL_WIDTH]) {
+                if (scope.GRID[scope.y/CELL_HEIGHT*GRID_WIDTH+scope.x/CELL_WIDTH]) {
                     scope.incrementScore()
                 }
-                scope.GRID[scope.y/CELL_HEIGHT*GRID_HEIGHT+scope.x/CELL_WIDTH] = 0;
+                scope.GRID[scope.y/CELL_HEIGHT*GRID_WIDTH+scope.x/CELL_WIDTH] = 0;
             }
         }
 
         function moveable(gridY, gridX) {
-            return (scope.GRID[gridY*GRID_HEIGHT+gridX] == 0) || (scope.GRID[gridY*GRID_HEIGHT+gridX] == 1);
+            return (scope.GRID[gridY*GRID_WIDTH+gridX] == 0) || (scope.GRID[gridY*GRID_WIDTH+gridX] == 1);
         }
         
         /** If space overlaps with ghost, dead. */
