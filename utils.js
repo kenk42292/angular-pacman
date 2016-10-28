@@ -204,7 +204,6 @@ function generateMaze(height, width, startY, startX) {
             //console.log(frontier.length);
             coord = frontier.pop();
             gridY = coord[0], gridX = coord[1];
-            console.log("(" + gridY + ", " + gridX + ")");
             temp = new Array();
             
             if (moveable(maze, gridY+2, gridX) && !explored.contains((gridY+2)*width+gridX)) {

@@ -68,6 +68,11 @@ pacmanApp.directive("ghostAgent", function($document, $interval) {
             $interval.cancel(rdTimeoutId);
             $interval.cancel(statechangeTimeoutId);
         });
+        scope.$on("end-game", function(event, data) {
+            $interval.cancel(timeoutId);
+            $interval.cancel(rdTimeoutId);
+            $interval.cancel(statechangeTimeoutId);
+        });
         
     }
 

@@ -52,8 +52,11 @@ pacmanApp.directive("pacmanAgent", function($document, $interval) {
             scope.pacmanLocation[1] = scope.x;
         }
         
-        var timeoutId = $interval(timeAction, TIME_INTERVAL);
+        var timeoutId = $interval(timeAction, TIME_INTERVAL*0.93); //make pacman slightly faster than ghosts...
         element.on("$destroy", function() {
+            $interval.cancel(timeoutId);
+        });
+        scope.$on("end-game", function(event, data) {
             $interval.cancel(timeoutId);
         });
     }
