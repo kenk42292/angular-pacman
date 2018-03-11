@@ -10,7 +10,6 @@ pacmanApp.directive("maze", function() {
                 $scope.numPellets += 1;
             }
         }
-        console.log($scope.numPellets);
         
 
         
@@ -34,7 +33,6 @@ pacmanApp.directive("maze", function() {
         }
         
         $scope.$on("pgOverlap", function(event, data) {
-            console.log("overlap message received in maze");
             $scope.$broadcast("reset");
             $scope.decrementLives();
         });

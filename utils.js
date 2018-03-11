@@ -201,7 +201,6 @@ function generateMaze(height, width, startY, startX) {
         var coord, gridY, gridX, temp;
         
         while (frontier.length != 0) {
-            //console.log(frontier.length);
             coord = frontier.pop();
             gridY = coord[0], gridX = coord[1];
             temp = new Array();
